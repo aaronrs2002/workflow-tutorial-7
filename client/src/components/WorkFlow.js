@@ -347,7 +347,7 @@ const WorkFlow = (props) => {
                     : null}
             </div>
 
-            <div className="row row-col-1 row-col-md-4 py-5">
+            <div className="row row-col-1 row-col-md-4 pt-5">
 
                 {(typeof stepsData) === "object" ?
 
