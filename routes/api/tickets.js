@@ -12,8 +12,7 @@ router.post("/add-ticket/", checkToken, (req, res) => {
         ticketInfo: req.body.ticketInfo,
         priority: req.body.priority,
         bugNewFeature: req.body.bugNewFeature,
-        assignedTo: req.body.assignedTo,
-        dueDate: req.body.dueDate
+        assignedTo: req.body.assignedTo
     }, (err, result) => {
         if (err) {
             console.log("error: " + err);
@@ -56,7 +55,7 @@ router.get("/get-ticket-info/:email", checkToken, (req, res) => {
 
 //SERVER SIDE PUT TICKET INFO
 router.put("/update-ticket/", checkToken, (req, res) => {
-    let sql = `UPDATE tickets SET ticketInfo = '${req.body.ticketInfo}', priority = '${req.body.priority}', bugNewFeature = '${req.body.bugNewFeature}', assignedTo = '${req.body.assignedTo}', dueDate = '${req.body.dueDate}' WHERE ticketId = '${req.body.ticketId}'`;
+    let sql = `UPDATE tickets SET ticketInfo = '${req.body.ticketInfo}', priority = '${req.body.priority}', bugNewFeature = '${req.body.bugNewFeature}', assignedTo = '${req.body.assignedTo}', dueDate = '${req.body.dueDate}', ticketId = '${req.body.ticketId}' WHERE ticketId = '${req.body.originalTitle}'`;
     let query = db.query(sql, (err, result) => {
         if (err) {
             console.log("error: " + err);
