@@ -8,8 +8,14 @@ footer {
   z-index: 2;
 }
 
-.container {
+.container,
+.container-fluid {
   padding-top: 80px;
+}
+
+[data-chart] {
+  background-color: #f3f3f3;
+  border-radius: 5px;
 }
 
 div.animated[role="alert"] {
