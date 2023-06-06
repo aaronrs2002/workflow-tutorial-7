@@ -10,6 +10,7 @@ import uuid from "./components/uuid";
 import Validate from "./components/Validate.js";
 import WorkFlow from "./components/WorkFlow";
 import MessageFeed from "./components/MessageFeed";
+import Timeline from "./components/Timeline";
 
 function App() {
   let [loaded, setLoaded] = useState(false);
@@ -43,7 +44,7 @@ function App() {
 
   //CLIENT SIDE GET MESSAGES FOR SPECIFIC TICKET
   const getMessages = (whichTicket) => {
-    // setFeed((feed) => []);
+    setFeed((feed) => []);
     axios.get("/api/messages/get-messages/" + whichTicket, config).then(
       (res) => {
         console.log("JSON.stringify(res.data): " + JSON.stringify(res.data) + " - (typeof res.data): " + (typeof res.data));
@@ -216,7 +217,8 @@ function App() {
         :
         <React.Fragment>
           <Nav setActiveModule={setActiveModule} activeModule={activeModule} userEmail={userEmail} />
-          <div className="container my-5">
+          <div className={activeModule === "timeline" ? "container-fluid my-5" : "container my-5"}>
+            {activeModule === "timeline" ? <Timeline showAlert={showAlert} config={config} ticketInfo={ticketInfo} userEmail={userEmail} getTickets={getTickets} setActiveTicket={setActiveTicket} activeTicket={activeTicket} getMessages={getMessages} /> : null}
             {activeModule === "workflow" ? <WorkFlow showAlert={showAlert} config={config} ticketInfo={ticketInfo} userEmail={userEmail} getTickets={getTickets} setActiveTicket={setActiveTicket} activeTicket={activeTicket} getMessages={getMessages} /> : null}
             {activeModule === "ticketBuilder" ? <TicketBuilder ticketInfo={ticketInfo} showAlert={showAlert} config={config} userEmail={userEmail} getTickets={getTickets} setActiveTicket={setActiveTicket} activeTicket={activeTicket} getMessages={getMessages} /> : null}
             {activeTicket !== null ? <MessageFeed showAlert={showAlert} config={config} userEmail={userEmail} activeTicket={activeTicket} feed={feed} getMessages={getMessages} /> : <h2>Select a ticket to post a message.</h2>}
@@ -259,19 +261,3 @@ function App() {
 
 export default App;
 
-/*
-IT Service Management (ITSM)
-
-To do list for help desk ticketing system workflow app:
-
-TICKET MODULE
-- Ticket priority: low, medium, high, critical
-- Bug report or new feature	
-- Assign tickets to users
-- Ticket due date with countdown
-WORKFLOW MODULE
-- Auto post when there is a status update
-- Steps date timeline for chart
-
-
-*/
