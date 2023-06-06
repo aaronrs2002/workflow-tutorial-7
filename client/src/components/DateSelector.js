@@ -46,7 +46,7 @@ const DateSelector = (props) => {
     return (
         <React.Fragment>
             <div className="col-md-4">
-                <select name={props.menu + "-select-year"} className="form-control" onChange={() => genericUpdate()}>
+                <select name={props.menu + "-select-year"} className="form-control" data-selector="date" onChange={() => genericUpdate()}>
                     <option value="default">{"Select " + props.menu + " year"}</option>
                     {years.length > 0 ? years.map((year, i) => {
                         return (<option key={i} value={year}>{year}</option>)
@@ -54,7 +54,7 @@ const DateSelector = (props) => {
                 </select>
             </div>
             <div className="col-md-4">
-                <select name={props.menu + "-select-month"} className="form-control" onChange={() => genericUpdate()}>
+                <select name={props.menu + "-select-month"} className="form-control" data-selector="date" onChange={() => genericUpdate()}>
                     <option value="default">{"Select " + props.menu + " month"}</option>
                     {months.length > 0 ? months.map((month, i) => {
 
@@ -65,7 +65,7 @@ const DateSelector = (props) => {
                 </select>
             </div>
             <div className="col-md-4">
-                <select name={props.menu + "-select-day"} className="form-control" onChange={() => genericUpdate()}>
+                <select name={props.menu + "-select-day"} className="form-control" data-selector="date" onChange={() => genericUpdate()}>
                     <option value="default">{"Select " + props.menu + " day"}</option>
                     {zeroToThirtyOne !== null ? zeroToThirtyOne.map((day, i) => {
                         if (parseInt(day) <= daysPerMonth) {
