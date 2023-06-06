@@ -39,17 +39,16 @@ const TicketBuilder = (props) => {
             (res) => {
 
 
-                document.querySelector("[name='ticketTitle']").value = res.data[0].ticketId;
+                document.querySelector("[name='ticketTitle']").value = res.data[0].ticketId.substring(res.data[0].ticketId.lastIndexOf(":") + 1);
                 document.querySelector("[name='ticketInfo']").value = res.data[0].ticketInfo;
                 document.querySelector("[name='priority']").value = res.data[0].priority;
                 document.querySelector("[name='bugNewFeature']").value = res.data[0].bugNewFeature;
                 document.querySelector("[name='assignedTo']").value = res.data[0].assignedTo;
-                console.log("res.data.dueDate: " + res.data[0].dueDate);
-                console.log("res.data[0].dueDate.substring(6, 8): " + res.data[0].dueDate.substring(6, 8));
-                console.log(" res.data[0].dueDate.substring(9, 10): " + res.data[0].dueDate.substring(9, 10));
-                document.querySelector("[name='due-select-year']").value = res.data[0].dueDate.substring(0, 4);
-                document.querySelector("[name='due-select-month']").value = res.data[0].dueDate.substring(5, 7);
-                document.querySelector("[name='due-select-day']").value = res.data[0].dueDate.substring(8, 10);
+
+
+                document.querySelector("[name='due-select-year']").value = res.data[0].ticketId.substring(res.data[0].ticketId.lastIndexOf("-due-") + 5).substring(0, 4);
+                document.querySelector("[name='due-select-month']").value = res.data[0].ticketId.substring(res.data[0].ticketId.lastIndexOf("-due-") + 5).substring(5, 7);
+                document.querySelector("[name='due-select-day']").value = res.data[0].ticketId.substring(res.data[0].ticketId.lastIndexOf("-due-") + 5).substring(8, 10);
 
 
                 props.getMessages(whichTicket);
@@ -69,12 +68,12 @@ const TicketBuilder = (props) => {
         } else {
             const dueDate = document.querySelector("[name='due-select-year']").value + "-" + document.querySelector("[name='due-select-month']").value + "-" + document.querySelector("[name='due-select-day']").value
             let tkObj = {
-                ticketId: timestamp() + ":" + props.userEmail + ":" + document.querySelector("[name='ticketTitle']").value,
+                ticketId: timestamp() + "-due-" + dueDate + ":" + props.userEmail + ":" + document.querySelector("[name='ticketTitle']").value,
                 ticketInfo: document.querySelector("[name='ticketInfo']").value,
                 priority: document.querySelector("[name='priority']").value,
                 bugNewFeature: document.querySelector("[name='bugNewFeature']").value,
-                assignedTo: document.querySelector("[name='assignedTo']").value,
-                dueDate
+                assignedTo: document.querySelector("[name='assignedTo']").value
+
             }
             axios.post("/api/tickets/add-ticket/", tkObj, props.config).then(
                 (res) => {
@@ -103,13 +102,16 @@ const TicketBuilder = (props) => {
             return false;
         } else {
             const dueDate = document.querySelector("[name='due-select-year']").value + "-" + document.querySelector("[name='due-select-month']").value + "-" + document.querySelector("[name='due-select-day']").value
+            let ticketEdit = document.querySelector("[name='ticketList']").value;
+            ticketEdit = ticketEdit.substring(0, ticketEdit.indexOf(":") + 3) + "-due-" + dueDate + ":" + props.userEmail + ":" + document.querySelector("[name='ticketTitle']").valiue
+
             let tkObj = {
-                ticketId: props.activeTicket,
+                ticketId: ticketEdit,
                 ticketInfo: document.querySelector("[name='ticketInfo']").value,
                 priority: document.querySelector("[name='priority']").value,
                 bugNewFeature: document.querySelector("[name='bugNewFeature']").value,
                 assignedTo: document.querySelector("[name='assignedTo']").value,
-                dueDate
+                originalTitle: props.activeTicket
             }
             axios.put("/api/tickets/update-ticket/", tkObj, props.config).then(
                 (res) => {
@@ -189,6 +191,7 @@ const TicketBuilder = (props) => {
 
         {func !== "delete" ?
             <React.Fragment>
+                <div className="col-md-12"><h5>Due date</h5></div>
                 <DateSelector menu={"due"} />
                 <div className="col-md-12">
                     <input type="text" className="form-control" name="ticketTitle" placeholder="Ticket title" />
