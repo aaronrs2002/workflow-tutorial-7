@@ -34,12 +34,13 @@ const WorkFlow = (props) => {
         axios.get("/api/workflow/get-workflow/" + whichTicket, props.config).then(
             (res) => {
                 props.getMessages(whichTicket);
-                if (res.data.length === 0 || res.data[0].stepsData === null) {
+                if (res.data.length === 0) {
                     props.showAlert("No data yet.", "info");
                     setStepsData((stepsData) => []);
                     setExistingData((existingData) => false);
                     return false;
                 } else {
+
                     let dataSuccess = JSON.parse(res.data[0].stepsData);
                     setExistingData((existingData) => true);
                     setStepsData((stepsData) => dataSuccess);
@@ -58,6 +59,8 @@ const WorkFlow = (props) => {
     const updateStep = (newStep) => {
         let tempTitle;
         let tempPrice;
+        let tempStepStart;
+        let tempStepEnd;
         let whichTicket = document.querySelector("[name='ticketList']").value;
         setTicketSelected((ticketSelected) => whichTicket);
         if (whichTicket === "default") {
@@ -77,9 +80,11 @@ const WorkFlow = (props) => {
         } else {
             let tempActiveTaskList = ["add/delete tasks"];
             if (func === "add") {
-                Validate(["newStepTitle", "newStepPrice"]);
+                Validate(["newStepTitle", "newStepPrice", "start-step-select-year", "start-step-select-month", "start-step-select-day", "end-step-select-year", "end-step-select-month", "end-step-select-day"]);
                 tempTitle = document.querySelector("[name='newStepTitle']").value;
                 tempPrice = document.querySelector("[name='newStepPrice']").value;
+                tempStepStart = document.querySelector("[name='start-step-select-year']").value + "-" + document.querySelector("[name='start-step-select-month']").value + "-" + document.querySelector("[name='start-step-select-day']").value;
+                tempStepEnd = document.querySelector("[name='end-step-select-year']").value + "-" + document.querySelector("[name='end-step-select-month']").value + "-" + document.querySelector("[name='end-step-select-day']").value;
 
             } else {
                 tempActiveTaskList = activeTaskList;
@@ -93,7 +98,7 @@ const WorkFlow = (props) => {
                 }
 
                 if (func === "add") {
-                    tempStepData = [...tempStepData, { stepTitle: tempTitle, stepPrice: tempPrice, tasks: tempActiveTaskList }]
+                    tempStepData = [...tempStepData, { stepTitle: tempTitle, stepPrice: tempPrice, stepStart: tempStepStart, stepEnd: tempStepEnd, tasks: tempActiveTaskList }]
                 }
             }
 
@@ -127,6 +132,9 @@ const WorkFlow = (props) => {
                     if (document.querySelector("[newStepTitle]")) {
                         document.querySelector("[newStepTitle]").value = "";
                         document.querySelector("[newStepPrice]").value = "";
+                        [].forEach.call(document.querySelectorAll("select[data-selector='date']"), (e) => {
+                            e.selectedIndex = 0;
+                        });
                     }
                 }
             }, (error) => {
@@ -144,8 +152,10 @@ const WorkFlow = (props) => {
             props.showAlert("Wich ticket?", "warning");
             return false;
         }
+        let tempStepStart = document.querySelector("[name='start-step-select-year']").value + "-" + document.querySelector("[name='start-step-select-month']").value + "-" + document.querySelector("[name='start-step-select-day']").value;
+        let tempStepEnd = document.querySelector("[name='end-step-select-year']").value + "-" + document.querySelector("[name='end-step-select-month']").value + "-" + document.querySelector("[name='end-step-select-day']").value;
 
-        let tempSteps = [...stepsData, { stepTitle: document.querySelector("[name='newStepTitle']").value, stepPrice: document.querySelector("[name='newStepPrice']").value, tasks: [] }];
+        let tempSteps = [...stepsData, { stepTitle: document.querySelector("[name='newStepTitle']").value, stepPrice: document.querySelector("[name='newStepPrice']").value, stepStart: tempStepStart, stepEnd: tempStepEnd, tasks: [] }];
 
         axios.post("/api/workflow/add-workflow/", { ticketId: whichTicket, stepsData: JSON.stringify(tempSteps) }, props.config).then(
             (res) => {
@@ -157,6 +167,9 @@ const WorkFlow = (props) => {
                     props.showAlert(document.querySelector("[name='newStepTitle']").value + " added.", "success");
                     document.querySelector("[name='newStepTitle']").value = "";
                     document.querySelector("[name='newStepPrice']").value = "";
+                    [].forEach.call(document.querySelectorAll("select[data-selector='date']"), (e) => {
+                        e.selectedIndex = 0;
+                    });
                 }
             }, (error) => {
                 props.showAlert("Your submission did not go through: " + error, "danger");
@@ -169,7 +182,7 @@ const WorkFlow = (props) => {
 
 
     const createStep = () => {
-        Validate(["newStepTitle", "newStepPrice"]);
+        Validate(["newStepTitle", "newStepPrice", "start-step-select-year", "start-step-select-month", "start-step-select-day", "end-step-select-year", "end-step-select-month", "end-step-select-day"]);
 
         if (document.querySelector(".error")) {
             props.showAlert("Your step needs a name and a price/time.", "warning");
