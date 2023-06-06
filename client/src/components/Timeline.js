@@ -72,14 +72,15 @@ const Timeline = (props) => {
                     },
                     offsetX: 0,
                     offsetY: 0,
-                    format: 'MMM/dd h:mm TT',
+                    // format: 'MMM/dd h:mm TT',
+                    format: 'MMM/dd',
                     formatter: undefined,
                     datetimeUTC: false,
                     datetimeFormatter: {
                         year: 'yyyy',
                         month: "MMM 'yy",
                         day: 'dd MMM',
-                        hour: 'HH:mm',
+                        // hour: 'HH:mm',
                     },
                 },
 
@@ -104,6 +105,45 @@ const Timeline = (props) => {
             }
         },
     });
+
+    const grabStepDates = (ticket) => {
+
+        let tempData = currentData;
+        let colorNumber = Math.floor(Math.random() * currentData.options.length);
+        let tempColor = currentData.options.fill.colors[colorNumber];
+        //CLIENT SIDE GET INFO BASED ON A SPECIFIC TICKET
+        axios.get("/api/workflow/get-workflow/" + ticket, props.config).then(
+            (res) => {
+                if (res.data.length === 0) {
+                    props.showAlert("No data yet.", "info");
+                    return false;
+                } else {
+
+                    let selectedTimeline = [];
+                    for (let i = 0; i < res.data.length; i++) {
+                        if ((typeof res.data[i].stepsData) === "string") {
+                            res.data[i].stepsData = JSON.parse(res.data[i].stepsData);
+                        }
+
+                        selectedTimeline.push({
+                            x: res.data[i].stepsData[0].stepTitle,
+                            y: [
+                                new Date(res.data[i].stepsData[0].stepStart).getTime(),
+                                new Date(res.data[i].stepsData[0].stepEnd).getTime()
+                            ],
+                            fillColor: tempColor
+                        });
+                    }
+                    tempData.series[0].data = [...tempData.series[0].data, ...selectedTimeline];
+                    tempData.series[0].timelineHeight = selectedTimeline.length * 95;
+
+                    setCurrentData((currentData) => tempData);
+                }
+            }, (error) => {
+                props.showAlert("Something is broken: " + error, "danger");
+            }
+        );
+    }
 
     const populateFields = () => {
         let tempData = currentData;
@@ -140,6 +180,7 @@ const Timeline = (props) => {
         tempData.series[0].timelineHeight = selectedTimeline.length * 95;
 
         setCurrentData((currentData) => tempData);
+        grabStepDates(whichTicket);
         setTimeout(() => {
             setPerformingUpdate((performingUpdate) => false);
         }, 1000);
