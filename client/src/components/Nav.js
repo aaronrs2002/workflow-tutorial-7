@@ -27,7 +27,9 @@ const Nav = (props) => {
                 <li className={props.activeModule === "workflow" ? "nav-item active" : "nav-item"}>
                     <a className="nav-link" href="#" onClick={() => toggleMobileNav("workflow")}>Workflow</a>
                 </li>
-
+                <li className={props.activeModule === "timeline" ? "nav-item active" : "nav-item"}>
+                    <a className="nav-link" href="#" onClick={() => toggleMobileNav("timeline")}>timeline</a>
+                </li>
             </ul>
         </div>
     </nav>)
