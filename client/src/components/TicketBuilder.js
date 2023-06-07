@@ -103,7 +103,7 @@ const TicketBuilder = (props) => {
         } else {
             const dueDate = document.querySelector("[name='due-select-year']").value + "-" + document.querySelector("[name='due-select-month']").value + "-" + document.querySelector("[name='due-select-day']").value
             let ticketEdit = document.querySelector("[name='ticketList']").value;
-            ticketEdit = ticketEdit.substring(0, ticketEdit.indexOf(":") + 3) + "-due-" + dueDate + ":" + props.userEmail + ":" + document.querySelector("[name='ticketTitle']").valiue
+            ticketEdit = ticketEdit.substring(0, ticketEdit.indexOf(":") + 3) + "-due-" + dueDate + ":" + props.userEmail + ":" + document.querySelector("[name='ticketTitle']").value
 
             let tkObj = {
                 ticketId: ticketEdit,
