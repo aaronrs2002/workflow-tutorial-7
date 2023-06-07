@@ -120,16 +120,17 @@ const Timeline = (props) => {
                 } else {
 
                     let selectedTimeline = [];
-                    for (let i = 0; i < res.data.length; i++) {
-                        if ((typeof res.data[i].stepsData) === "string") {
-                            res.data[i].stepsData = JSON.parse(res.data[i].stepsData);
-                        }
+                    if ((typeof res.data[0].stepsData) === "string") {
+                        res.data[0].stepsData = JSON.parse(res.data[0].stepsData);
+                    }
+
+                    for (let i = 0; i < res.data[0].stepsData.length; i++) {
 
                         selectedTimeline.push({
-                            x: res.data[i].stepsData[0].stepTitle,
+                            x: res.data[0].stepsData[i].stepTitle,
                             y: [
-                                new Date(res.data[i].stepsData[0].stepStart).getTime(),
-                                new Date(res.data[i].stepsData[0].stepEnd).getTime()
+                                new Date(res.data[0].stepsData[i].stepStart).getTime(),
+                                new Date(res.data[0].stepsData[i].stepEnd).getTime()
                             ],
                             fillColor: tempColor
                         });
@@ -204,7 +205,9 @@ const Timeline = (props) => {
         {props.ticketInfo !== null ?
 
             <div className="col-md-12">
-                <TicketList ticketInfo={props.ticketInfo} populateFields={populateFields} />
+                {(typeof props.ticketInfo) === "object" ?
+                    <TicketList ticketInfo={props.ticketInfo} populateFields={populateFields} />
+                    : null}
             </div>
             : null}
         <div className="col=md-12">
@@ -212,7 +215,7 @@ const Timeline = (props) => {
         </div>
         <div className="col-md-12">
             <div className="block" data-chart="timeline">
-                {(typeof currentData.series[0].data) !== null && performingUpdate === false ?
+                {(typeof currentData.series[0].data) === "object" && performingUpdate === false ?
                     <ReactApexChart options={currentData.options} series={currentData.series} type="rangeBar" height={currentData.timelineHeight} width={window.innerWidth - 50} />
                     : <div className="loader"></div>}
             </div>
