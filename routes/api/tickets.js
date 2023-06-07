@@ -55,7 +55,19 @@ router.get("/get-ticket-info/:email", checkToken, (req, res) => {
 
 //SERVER SIDE PUT TICKET INFO
 router.put("/update-ticket/", checkToken, (req, res) => {
-    let sql = `UPDATE tickets SET ticketInfo = '${req.body.ticketInfo}', priority = '${req.body.priority}', bugNewFeature = '${req.body.bugNewFeature}', assignedTo = '${req.body.assignedTo}', dueDate = '${req.body.dueDate}', ticketId = '${req.body.ticketId}' WHERE ticketId = '${req.body.originalTitle}'`;
+
+    let sql = `
+    UPDATE tickets, messages, workflow
+    SET
+    tickets.ticketInfo = '${req.body.ticketInfo}', 
+    tickets.priority = '${req.body.priority}',
+    tickets.bugNewFeature = '${req.body.bugNewFeature}', 
+    tickets.assignedTo = '${req.body.assignedTo}', 
+    tickets.ticketId = '${req.body.ticketId}',
+    messages.ticketId = '${req.body.ticketId}',
+    workflow.ticketId = '${req.body.ticketId}' 
+    WHERE tickets.ticketId = '${req.body.originalTitle}'`;
+
     let query = db.query(sql, (err, result) => {
         if (err) {
             console.log("error: " + err);
@@ -64,6 +76,7 @@ router.put("/update-ticket/", checkToken, (req, res) => {
         }
     });
 });
+//begin edit
 
 
 //SERVER SIDE DELETE TICKET
