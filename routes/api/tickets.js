@@ -56,17 +56,21 @@ router.get("/get-ticket-info/:email", checkToken, (req, res) => {
 //SERVER SIDE PUT TICKET INFO
 router.put("/update-ticket/", checkToken, (req, res) => {
 
-    let sql = `
-    UPDATE tickets, messages, workflow
-    SET
-    tickets.ticketInfo = '${req.body.ticketInfo}', 
-    tickets.priority = '${req.body.priority}',
-    tickets.bugNewFeature = '${req.body.bugNewFeature}', 
-    tickets.assignedTo = '${req.body.assignedTo}', 
-    tickets.ticketId = '${req.body.ticketId}',
-    messages.ticketId = '${req.body.ticketId}',
-    workflow.ticketId = '${req.body.ticketId}' 
-    WHERE tickets.ticketId = '${req.body.originalTitle}'`;
+    let sql = ` UPDATE workflowTaskmanager.tickets tickets
+LEFT JOIN  workflowTaskmanager.messages 
+ON tickets.ticketId = workflowTaskmanager.messages.ticketId     
+LEFT JOIN   workflowTaskmanager.workflow 
+ON workflowTaskmanager.messages.ticketId = workflowTaskmanager.workflow.ticketId   
+SET 
+tickets.ticketInfo = '${req.body.ticketInfo}', 
+tickets.priority = '${req.body.priority}',
+tickets.bugNewFeature = '${req.body.bugNewFeature}', 
+tickets.assignedTo = '${req.body.assignedTo}', 
+tickets.ticketId = '${req.body.ticketId}',
+workflowTaskmanager.messages.ticketId = tickets.ticketId,
+workflowTaskmanager.workflow.ticketId = tickets.ticketId 
+WHERE tickets.ticketId = '${req.body.originalTitle}'`;
+
 
     let query = db.query(sql, (err, result) => {
         if (err) {
